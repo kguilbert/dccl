@@ -231,5 +231,5 @@ endforeach()
 
 ## start adding subdirectories
 add_subdirectory(src)
-
+add_subdirectory(python)
 

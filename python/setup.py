@@ -11,6 +11,8 @@ from setuptools.extension import Extension
 from distutils.command.clean import clean as _clean
 from distutils.command.build_py import build_py as _build_py
 import subprocess
+import os
+import sys
 
 class clean(_clean):
   def run(self):
@@ -26,12 +28,9 @@ class clean(_clean):
 
 class build_py(_build_py):
   def run(self):
-    # Generate option_extension.proto file.
-    protoc_command = ['protoc', '-I../build/include/', '-I/usr/include', '--python_out=.', '../build/include/dccl/option_extensions.proto']
-    if subprocess.call(protoc_command) != 0:
-      sys.exit(-1)
-
-    # _build_py is an old-style class, so super() doesn't work.
+    if not os.path.exists('dccl/option_extensions_pb2.py'):
+        print('FATAL: dccl/option_extensions_pb2.py not found. Build dccl first (e.g. with build.sh).')
+        sys.exit(-1)
     _build_py.run(self)
 
 setup(
@@ -40,6 +39,7 @@ setup(
     description="Python Bindings for DCCL.",
     author="Chris Murphy",
     author_email="cmurphy@aphysci.com",
+    install_requires=['protobuf'],
 
     packages=find_packages(),
 
